@@ -3,6 +3,7 @@ package menu;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import restaurant.Table;
 
 public class TableManager {
@@ -18,6 +19,7 @@ public class TableManager {
 
     public void addTable(Table table) {
         tableList.add(table);
+        System.out.println("Them ban so " + table.getTableNumber() + " thanh cong!");
     }
 
     public void deleteTable(int tableNumber) {
@@ -30,9 +32,49 @@ public class TableManager {
     }
 
     public void displayTables() {
+        System.out.println("== Danh sach ban an ==");
+        
         for (Table table : tableList) {
             table.displayInfo();
         }
+    }
+
+    public void updateTable(int tableNumber) {
+        Scanner sc = new Scanner(System.in);
+        boolean found = false;
+
+        for (Table table : tableList) {
+            if (table.getTableNumber() == tableNumber) {
+                System.out.println("Da tim thay ban so: " + table.getTableNumber());
+                
+                System.out.print("Nhap so ban moi (Nhan -1 de giu nguyen): ");
+                int newNumber = sc.nextInt();
+                sc.nextLine();
+                if (newNumber >= 0) {
+                    table.setTableNumber(newNumber);
+                }
+
+                found = true;
+                System.out.println("So ban da duoc cap nhat!");
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Khong tim thay ban so: " + tableNumber);
+        }
+
+        saveTableListToFile();
+    }
+
+    public void searchTable(int tableNumber) {
+        for (Table table : tableList) {
+            if (table.getTableNumber() == tableNumber) {
+                table.displayInfo();
+                return;
+            }
+        }
+        System.out.println("Khong tim thay ban so: " + tableNumber);
     }
 
     public void loadTableFromFile() {

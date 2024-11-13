@@ -30,11 +30,12 @@ public class Menu {
         int choice;
 
         do {
-            System.out.println("===== Quan ly nha hang =====");
+            System.out.println("\n===== Quan ly nha hang =====");
             System.out.println("1. Quan ly thuc don");
             System.out.println("2. Quan ly ban an");
             System.out.println("3. Quan ly nhan vien");
             System.out.println("4. Quan ly don hang");
+            System.out.println("5. Dat mon an");
             System.out.println("0. Thoat");
             System.out.print("Chon chuc nang: ");
             choice = sc.nextInt();
@@ -53,6 +54,9 @@ public class Menu {
                 case 4:
                     manageOrders(sc);
                     break;
+                case 5:
+                    orderFood(sc);
+                    break;
                 case 0:
                     System.out.println("Dang thoat ...");
                     break;
@@ -63,7 +67,7 @@ public class Menu {
         } while (choice != 0);
     }
 
-    private void manageFoodMenu(Scanner sc) {
+    public void manageFoodMenu(Scanner sc) {
         int choice = -1;
 
         do {
@@ -71,8 +75,9 @@ public class Menu {
             System.out.println("1. Them mon an");
             System.out.println("2. Xoa mon an");
             System.out.println("3. Cap nhat mon an");
-            System.out.println("4. Hien thi thuc don");
-            System.out.println("5. Luu thuc don");
+            System.out.println("4. Tim mon an");
+            System.out.println("5. Hien thi thuc don");
+            System.out.println("6. Luu thuc don");
             System.out.println("0. Thoat");
             System.out.print("Chon chuc nang: ");
                 
@@ -81,43 +86,43 @@ public class Menu {
 
             switch (choice) {
                 case 1:
-                    System.out.println("Chon loai mon an: ");
-                    System.out.println("1. Mon chinh");
-                    System.out.println("2. Mon trang mieng");
-                    System.out.println("3. Mon an nhe");
-                    System.out.println("4. Do uong");
-        
-                    System.out.print("Nhap lua chon: ");
-                    int type = sc.nextInt();
-                    sc.nextLine();
-        
-                    System.out.print("Nhap ten mon an: ");
-                    String name = sc.nextLine();
-                    System.out.print("Nhap gia mon an: ");
-                    double price = sc.nextDouble();
-                    sc.nextLine();
-        
-                    switch (type) {
-                        case 1:
-                            foodManager.addFood(new MainDish(name, price));
-                            System.out.println("Them mon chinh thanh cong!");
-                            break;
-                        case 2:
-                            foodManager.addFood(new Dessert(name, price));
-                            System.out.println("Them mon trang mieng thanh cong!");
-                            break;
-                        case 3:
-                            foodManager.addFood(new Snack(name, price));
-                            System.out.println("Them mon an nhe thanh cong!");
-                            break;
-                        case 4:
-                            foodManager.addFood(new Drink(name, price));
-                            System.out.println("Them do uong thanh cong!");
-                            break;
-                        default:
-                            System.out.println("Lua chon khong hop le!");
-                            break;
-                    }
+                    int type = -1;
+
+                    do {
+                        System.out.println("Chon loai mon an: ");
+                        System.out.println("1. Mon chinh");
+                        System.out.println("2. Mon trang mieng");
+                        System.out.println("3. Mon an nhe");
+                        System.out.println("4. Do uong");
+            
+                        System.out.print("Nhap lua chon: ");
+                        type = sc.nextInt();
+                        sc.nextLine();
+            
+                        System.out.print("Nhap ten mon an: ");
+                        String name = sc.nextLine();
+                        System.out.print("Nhap gia mon an: ");
+                        double price = sc.nextDouble();
+                        sc.nextLine();
+
+                        switch (type) {
+                            case 1:
+                                foodManager.addFood(new MainDish(name, price));
+                                break;
+                            case 2:
+                                foodManager.addFood(new Dessert(name, price));
+                                break;
+                            case 3:
+                                foodManager.addFood(new Snack(name, price));
+                                break;
+                            case 4:
+                                foodManager.addFood(new Drink(name, price));
+                                break;
+                            default:
+                                System.out.println("Lua chon khong hop le!");
+                                break;
+                        }
+                    } while (type != 0);
                     break;        
                 case 2:
                     System.out.print("Nhap ten mon can xoa: ");
@@ -130,9 +135,14 @@ public class Menu {
                     foodManager.updateFood(nameToUpdate);
                     break;
                 case 4:
-                    foodManager.displayMenu();
+                    System.out.print("Nhap ten mon can tim: ");
+                    String nameToSearch = sc.nextLine();
+                    foodManager.searchFood(nameToSearch);;
                     break;
                 case 5:
+                    foodManager.displayMenu();
+                    break;
+                case 6:
                     foodManager.saveToFile();
                     System.out.println("Da luu thuc don!");
                     break;
@@ -146,15 +156,17 @@ public class Menu {
         } while (choice != 0);
     }        
 
-    private void manageTables(Scanner sc) {
+    public void manageTables(Scanner sc) {
         int choice = -1;
         
         do {
             System.out.println("===== Quan ly ban an =====");
             System.out.println("1. Them ban");
             System.out.println("2. Xoa ban");
-            System.out.println("3. Hien thi danh sach ban");
-            System.out.println("4. Luu danh sach ban");
+            System.out.println("3. Sua so ban");
+            System.out.println("4. Tim ban");
+            System.out.println("5. Hien thi danh sach ban");
+            System.out.println("6. Luu danh sach ban");
             System.out.println("0. Thoat");
             System.out.print("Chon chuc nang: ");
             choice = sc.nextInt();
@@ -177,9 +189,23 @@ public class Menu {
                     tableManager.deleteTable(tableDelete);
                     break;
                 case 3:
-                    tableManager.displayTables();
+                    System.out.println("Nhap so ban can sua: ");
+                    int tableUpdate = sc.nextInt();
+                    sc.nextLine();
+
+                    tableManager.updateTable(tableUpdate);
                     break;
                 case 4:
+                    System.out.println("Nhap so ban can tim: ");
+                    int tableSearch = sc.nextInt();
+                    sc.nextLine();
+
+                    tableManager.searchTable(tableSearch);
+                    break;    
+                case 5:
+                    tableManager.displayTables();
+                    break;
+                case 6:
                     tableManager.saveTableListToFile();
                     System.out.println("Da luu danh sach ban");
                     break;
@@ -193,15 +219,17 @@ public class Menu {
         } while (choice != 0);
     }
 
-    private void manageEmployees(Scanner sc) {
+    public void manageEmployees(Scanner sc) {
         int choice = -1;
         
         do {
             System.out.println("===== Quan ly nhan vien =====");
             System.out.println("1. Them nhan vien");
             System.out.println("2. Xoa nhan vien");
-            System.out.println("3. Hien thi danh sach nhan vien");
-            System.out.println("4. Luu danh sach nhan vien");
+            System.out.println("3. Sua nhan vien");
+            System.out.println("4. Tim nhan vien");
+            System.out.println("5. Hien thi danh sach nhan vien");
+            System.out.println("6. Luu danh sach nhan vien");
             System.out.println("0. Thoat");
             System.out.print("Chon chuc nang: ");
             choice = sc.nextInt();
@@ -225,10 +253,23 @@ public class Menu {
                     employeeManager.deleteEmployee(nameDelete);
                     break;
                 case 3:
-                    employeeManager.displayEmployees();
+                    System.out.println("Nhap ten nhan vien can sua: ");
+                    String nameUpdate = sc.nextLine();
+
+                    employeeManager.updateEmployee(nameUpdate);
                     break;
                 case 4:
+                    System.out.println("Nhap ten nhan vien can tim: ");
+                    String employeeSearch = sc.nextLine();
+
+                    employeeManager.searchEmployee(employeeSearch);
+                    break;
+                case 5:
+                    employeeManager.displayEmployees();
+                    break;
+                case 6:
                     employeeManager.saveEmployeeListToFile();
+                    System.out.println("Da luu danh sach nhan vien");
                     break;
                 case 0:
                     System.out.println("Dang thoat ...");
@@ -240,32 +281,86 @@ public class Menu {
         } while (choice != 0);
     }
 
-    private void manageOrders(Scanner scanner) {
-        System.out.println("===== Quan ly don hang =====");
-        System.out.println("1. Dat mon");
-        System.out.println("2. Hoan thanh don hang");
-        System.out.println("3. Xem chi tiet don hang");
-        System.out.println("4. Tinh doanh thu");
-        System.out.print("Chon chuc nang: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+    public void manageOrders(Scanner sc) {
+        int choice = -1;
+        
+        do {
+            System.out.println("===== Quan ly don hang =====");
+            System.out.println("1. Xem chi tiet don hang");
+            System.out.println("2. Tinh doanh thu");
+            System.out.println("0. Thoat");
+            System.out.print("Chon chuc nang: ");
+            choice = sc.nextInt();
+            sc.nextLine();
 
-        switch (choice) {
-            case 1:
-                // Goi orderManager.placeOrder() sau khi nhan dau vao tu nguoi dung
-                break;
-            case 2:
-                // Goi orderManager.completeOrder() sau khi nhan so ban tu nguoi dung
-                break;
-            case 3:
-                orderManager.viewOrderDetail();
-                break;
-            case 4:
-                orderManager.calculateTotalRevenue();
-                break;
-            default:
-                System.out.println("Lua chon khong hop le.");
-                break;
-        }
+            switch (choice) {
+                case 1:
+                    orderManager.viewOrderDetail();
+                    break;
+                case 2:
+                    orderManager.calculateTotalRevenue();
+                    break;
+                case 3:
+                    System.out.println("Dang thoat ...");
+                    break;
+                default:
+                    System.out.println("Lua chon khong hop le.");
+                    break;
+            }
+        } while (choice != 0);
+    }
+
+    public void orderFood(Scanner sc) {
+        int choice = -1;
+        
+        do {
+            System.out.println("===== Dat mon an =====");
+            System.out.println("1. Xem thuc don");
+            System.out.println("2. Tim mon");
+            System.out.println("3. Goi mon");
+            System.out.println("4. Thanh toan");
+            System.out.println("0. Thoat");
+            System.out.print("Chon chuc nang: ");
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    foodManager.displayMenu();
+                    break;
+                case 2:
+                    System.out.print("Nhap ten mon can tim: ");
+                    String nameToSearch = sc.nextLine();
+                    foodManager.searchFood(nameToSearch);;
+                    break;
+                case 3:
+                    System.out.println("Nhap ten mon an: ");
+                    String foodName = sc.nextLine();
+                    System.out.println("Nhap so luong: ");
+                    int quantity = sc.nextInt();
+                    sc.nextLine();
+                    System.out.println("Nhap ten nhan vien order: ");
+                    String employeeName = sc.nextLine();
+                    System.out.println("Nhap so ban: ");
+                    int tableNumber = sc.nextInt();
+                    sc.nextLine();
+
+                    orderManager.placeOrder(foodName, quantity, employeeName, tableNumber);
+                    break;
+                case 4:
+                    System.out.println("Nhap so ban thanh toan: ");
+                    int tableCheckOut = sc.nextInt();
+                    sc.nextLine();
+
+                    orderManager.completeOrder(tableCheckOut);
+                    break;
+                case 0:
+                    System.out.println("Dang thoat ...");
+                    break;
+                default:
+                    System.out.println("Lua chon khong hop le.");
+                    break;
+            }
+        } while (choice != 0);
     }
 }

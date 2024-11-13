@@ -18,7 +18,12 @@ public class FoodManager {
     }
 
     public void addFood(Food food) {
-        foodList.add(food);
+        if (getFoodByName(food.getName()) != null){
+            System.out.println("Mon " + food.getName() + " da ton tai!");
+        } else {
+            foodList.add(food);
+            System.out.println("Them " + food.getType() + " - " + food.getName() + " thanh cong!");
+        }        
     }
 
     public void removeFood(String name) {
@@ -65,6 +70,8 @@ public class FoodManager {
     }
 
     public void displayMenu() {
+        System.out.println("         == Thuc don ==");
+
         for (Food food : foodList) {
             food.display();
         }
@@ -97,16 +104,16 @@ public class FoodManager {
                 if (parts.length == 3) {
                     switch (parts[0].toLowerCase()) {
                         case "mon chinh":
-                            addFood(new MainDish(parts[1], Double.parseDouble(parts[2])));
+                            addFoodToMenu(new MainDish(parts[1], Double.parseDouble(parts[2])));
                             break;
                         case "mon trang mieng":
-                            addFood(new Dessert(parts[1], Double.parseDouble(parts[2])));
+                            addFoodToMenu(new Dessert(parts[1], Double.parseDouble(parts[2])));
                             break;
                         case "do uong":
-                            addFood(new Drink(parts[1], Double.parseDouble(parts[2])));
+                            addFoodToMenu(new Drink(parts[1], Double.parseDouble(parts[2])));
                             break;
                         case "mon an nhe":
-                            addFood(new Snack(parts[1], Double.parseDouble(parts[2])));
+                            addFoodToMenu(new Snack(parts[1], Double.parseDouble(parts[2])));
                             break;
                         default:
                             System.out.println("Loai mon khong hop le: " + parts[0]);
@@ -117,6 +124,10 @@ public class FoodManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void addFoodToMenu(Food food){
+        foodList.add(food);
     }
 
     public void saveToFile() {
