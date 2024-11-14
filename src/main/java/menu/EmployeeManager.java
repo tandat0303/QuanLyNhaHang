@@ -18,7 +18,12 @@ public class EmployeeManager {
     }
     
     public void addEmployee(Employee employee) {
-        employeeList.add(employee);
+        if (getEmployeeByName(employee.getName()) != null){
+            System.out.println("Nhan vien " + employee.getName() + " da ton tai!");
+        } else {
+            employeeList.add(employee);
+            System.out.println("Them nhan vien " + employee.getName() + " voi muc luong " + employee.getSalary() + "(VND) thanh cong!");
+        }
     }
 
     public void deleteEmployee(String employeeName) {
@@ -87,11 +92,15 @@ public class EmployeeManager {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                addEmployee(new Employee(parts[0], Double.parseDouble(parts[1])));
+                addEmployeeToMenu(new Employee(parts[0], Double.parseDouble(parts[1])));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void addEmployeeToMenu(Employee employee){
+        employeeList.add(employee);
     }
 
     public void saveEmployeeListToFile() {

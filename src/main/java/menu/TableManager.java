@@ -18,8 +18,12 @@ public class TableManager {
     }
 
     public void addTable(Table table) {
-        tableList.add(table);
-        System.out.println("Them ban so " + table.getTableNumber() + " thanh cong!");
+        if (getTableByNumTable(table.getTableNumber()) != null){
+            System.out.println("Ban so " + table.getTableNumber() + " da ton tai!");
+        } else {
+            tableList.add(table);
+            System.out.println("Them ban so " + table.getTableNumber() + " thanh cong!");
+        }
     }
 
     public void deleteTable(int tableNumber) {
@@ -82,7 +86,7 @@ public class TableManager {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                addTable(new Table(Integer.parseInt(parts[0]), parts[1]));
+                addTableToMenu(new Table(Integer.parseInt(parts[0]), parts[1]));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,6 +102,10 @@ public class TableManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void addTableToMenu(Table table){
+        tableList.add(table);
     }
 
     public Table getTableByNumTable(int tableNumber) {

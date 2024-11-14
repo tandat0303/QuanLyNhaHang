@@ -1,8 +1,10 @@
 package menu;
 
 import java.io.*;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
+import java.time.LocalDateTime;
 import restaurant.Employee;
 import restaurant.Table;
 import objects.*;
@@ -11,11 +13,28 @@ public class OrderManager {
     private FoodManager fm;
     private TableManager tm;
     private EmployeeManager em;
+    private int currentBillId;
 
     public OrderManager(FoodManager foodManager, TableManager tableManager, EmployeeManager employeeManager) {
         this.fm = foodManager;
         this.tm = tableManager;
         this.em = employeeManager;
+        this.currentBillId = loadMaxBillId();
+    }
+
+    private int loadMaxBillId() {
+        int maxBillId = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/bills.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                int billId = Integer.parseInt(parts[0].trim());
+                maxBillId = billId;
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return maxBillId + 1;
     }
 
     public void placeOrder(String foodName, int quantity, String employeeName, int tableNumber) {
@@ -60,10 +79,9 @@ public class OrderManager {
     
         saveOrderToFile(employeeName, foodName, quantity, tableNumber);
     }
-
+    
     public void completeOrder(int tableNumber) {
         List<Table> tableList = tm.getTableList();
-        
         Table selectedTable = null;
         for (Table table : tableList) {
             if (table.getTableNumber() == tableNumber) {
@@ -81,20 +99,32 @@ public class OrderManager {
             System.out.println("Ban so " + selectedTable.getTableNumber() + " hien dang trong");
             return;
         }
-        
+
+        String orderEmployeeName = null;
         List<String> remainingOrders = new ArrayList<>();
-    
-        try (BufferedReader reader = new BufferedReader(new FileReader("data/orders.txt"));
-             BufferedWriter historyWriter = new BufferedWriter(new FileWriter("data/orders_history.txt", true))) {
-    
+        List<String> billDetails = new ArrayList<>();
+        double totalAmount = 0;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/orders.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 int orderTableNumber = Integer.parseInt(parts[3]);
-    
+
                 if (orderTableNumber == tableNumber) {
-                    historyWriter.write(line);
-                    historyWriter.newLine();
+                    if (orderEmployeeName == null) {
+                        orderEmployeeName = parts[0];
+                    }
+
+                    String foodName = parts[1];
+                    int quantity = Integer.parseInt(parts[2]);
+                    Food food = fm.getFoodByName(foodName);
+
+                    double itemTotal = food.getPrice() * quantity;
+                    totalAmount += itemTotal;
+
+                    billDetails.add(currentBillId + "," + orderEmployeeName + "," + orderTableNumber + "," + foodName + "," +
+                                    food.getPrice() + "," + quantity + "," + itemTotal);
                 } else {
                     remainingOrders.add(line);
                 }
@@ -102,7 +132,26 @@ public class OrderManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    
+
+        LocalDateTime now = LocalDateTime.now();
+        String formattedDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        try (BufferedWriter billsWriter = new BufferedWriter(new FileWriter("data/bills.txt", true))) {
+            billsWriter.write(currentBillId + "," + formattedDate);
+            billsWriter.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (BufferedWriter detailsWriter = new BufferedWriter(new FileWriter("data/bills_detail.txt", true))) {
+            for (String detail : billDetails) {
+                detailsWriter.write(detail + "," + totalAmount);
+                detailsWriter.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/orders.txt"))) {
             for (String order : remainingOrders) {
                 writer.write(order);
@@ -111,35 +160,83 @@ public class OrderManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    
-        for (Table table : tableList) {
-            if (table.getTableNumber() == tableNumber) {
-                table.setStatus("Trong");
-                System.out.println("Thanh toan thanh cong ban so " + tableNumber);
-                tm.saveTableListToFile();
-                return;
-            }
-        }
-        System.out.println("Khong tim thay ban so: " + tableNumber);
+
+        selectedTable.setStatus("Trong");
+        System.out.println("Thanh toan thanh cong ban so " + tableNumber);
+        tm.saveTableListToFile();
+        currentBillId++;
     }
 
-    public void viewOrderDetail() {
-        System.out.println("Lich su don hang:\n");
-        try (BufferedReader reader = new BufferedReader(new FileReader("data/orders_history.txt"))) {
+    public void viewBillList(){
+        System.out.println("== Danh sach hoa don ==");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/bills.txt"))){
             String line;
+            boolean found = false;
+
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                String employeeName = parts[0];
-                String foodName = parts[1];
-                int quantity = Integer.parseInt(parts[2]);
-                int tableNumber = Integer.parseInt(parts[3]);
-                
-                System.out.println("Nhan vien order: " + employeeName + ", " + foodName + " x " + quantity + ", Ban so " + tableNumber);
+                String parts[] = line.split(",");
+                int billId = Integer.parseInt(parts[0]);
+                String billDate = parts[1];
+    
+                System.out.println("Ma hoa don: " + billId + ", Thoi gian: " + billDate);
+                found = true;
+            }
+    
+            if (!found) {
+                System.out.println("Khong co hoa don nao.");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void viewBillDetail(int billId) {
+        System.out.println("== Chi tiet hoa don " + billId + " ==\n");
+    
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/bills_detail.txt"))) {
+            String line;
+            boolean found = false;
+            String employeeName = null;
+            double totalAmount = 0;
+            int tableNumber = 0;
+    
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                int recordBillId = Integer.parseInt(parts[0]);
+    
+                if (recordBillId == billId) {
+                    if (employeeName == null) {
+                        employeeName = parts[1];
+                        System.out.println("Ten nhan vien: " + employeeName);
+                    }
+
+                    if (tableNumber == 0) {
+                        tableNumber = Integer.parseInt(parts[2]);
+                        System.out.println("Ban: " + tableNumber);
+                    }
+                    
+
+                    String foodName = parts[3];
+                    double price = Double.parseDouble(parts[4]);
+                    int quantity = Integer.parseInt(parts[5]);
+                    double itemTotal = Double.parseDouble(parts[6]);
+                    System.out.println("Mon an: " + foodName + ", Don gia: " + price + ", So luong: " + quantity
+                                         + ", Tong tien mon: " + itemTotal);
+                    totalAmount += itemTotal;
+                    found = true;
+                }
+            }
+    
+            if (found) {
+                System.out.println("Tong hoa don: " + totalAmount);
+            } else {
+                System.out.println("Khong tim thay chi tiet hoa don voi ma so: " + billId);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }        
 
     public void calculateTotalRevenue() {
         int mainDishCount = 0;
@@ -149,12 +246,12 @@ public class OrderManager {
         
         double total = 0;
         
-        try (BufferedReader reader = new BufferedReader(new FileReader("data/orders_history.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/bills_detail.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                String foodName = parts[1];
-                int quantitySold = Integer.parseInt(parts[2]);
+                String foodName = parts[3];
+                int quantitySold = Integer.parseInt(parts[5]);
                 
                 if (fm.getFoodByName(foodName) instanceof MainDish) {
                     mainDishCount += quantitySold;
@@ -175,7 +272,7 @@ public class OrderManager {
             e.printStackTrace();
         }
         
-        System.out.println("Doanh thu nha hang: \n");
+        System.out.println("== Doanh thu nha hang ==\n");
         
         System.out.println("So luong mon chinh da ban: " + mainDishCount);
         System.out.println("So luong mon trang mieng da ban: " + dessertCount);

@@ -1,14 +1,17 @@
 package menu;
 
 import java.util.Scanner;
+
+import Interface.Manageable;
 import objects.Dessert;
 import objects.Drink;
+import objects.Food;
 import objects.MainDish;
 import objects.Snack;
 import restaurant.Employee;
 import restaurant.Table;
 
-public class Menu {
+public class Menu implements Manageable {
     private FoodManager foodManager;
     private TableManager tableManager;
     private EmployeeManager employeeManager;
@@ -107,16 +110,16 @@ public class Menu {
 
                         switch (type) {
                             case 1:
-                                foodManager.addFood(new MainDish(name, price));
+                                addFood(new MainDish(name, price));
                                 break;
                             case 2:
-                                foodManager.addFood(new Dessert(name, price));
+                                addFood(new Dessert(name, price));
                                 break;
                             case 3:
-                                foodManager.addFood(new Snack(name, price));
+                                addFood(new Snack(name, price));
                                 break;
                             case 4:
-                                foodManager.addFood(new Drink(name, price));
+                                addFood(new Drink(name, price));
                                 break;
                             default:
                                 System.out.println("Lua chon khong hop le!");
@@ -127,23 +130,23 @@ public class Menu {
                 case 2:
                     System.out.print("Nhap ten mon can xoa: ");
                     String nameToRemove = sc.nextLine();
-                    foodManager.removeFood(nameToRemove);
+                    removeFood(nameToRemove);
                     break;
                 case 3:
                     System.out.print("Nhap ten mon can sua: ");
                     String nameToUpdate = sc.nextLine();
-                    foodManager.updateFood(nameToUpdate);
+                    updateFood(nameToUpdate);
                     break;
                 case 4:
                     System.out.print("Nhap ten mon can tim: ");
                     String nameToSearch = sc.nextLine();
-                    foodManager.searchFood(nameToSearch);;
+                    searchFood(nameToSearch);;
                     break;
                 case 5:
-                    foodManager.displayMenu();
+                    displayMenu();
                     break;
                 case 6:
-                    foodManager.saveToFile();
+                    saveToFile();
                     System.out.println("Da luu thuc don!");
                     break;
                 case 0:
@@ -174,39 +177,38 @@ public class Menu {
 
             switch (choice) {
                 case 1:
-                    System.out.println("Nhap so ban: ");
+                    System.out.print("Nhap so ban: ");
                     int tableNumber = sc.nextInt();
                     sc.nextLine();
 
-                    tableManager.addTable(new Table(tableNumber, "Trong"));
-                    System.out.println("Them ban so " + tableNumber + " thanh cong!");
+                    addTable(new Table(tableNumber, "Trong"));
                     break;
                 case 2:
-                    System.out.println("Nhap so ban can xoa: ");
+                    System.out.print("Nhap so ban can xoa: ");
                     int tableDelete = sc.nextInt();
                     sc.nextLine();
 
-                    tableManager.deleteTable(tableDelete);
+                    deleteTable(tableDelete);
                     break;
                 case 3:
-                    System.out.println("Nhap so ban can sua: ");
+                    System.out.print("Nhap so ban can sua: ");
                     int tableUpdate = sc.nextInt();
                     sc.nextLine();
 
-                    tableManager.updateTable(tableUpdate);
+                    updateTable(tableUpdate);
                     break;
                 case 4:
-                    System.out.println("Nhap so ban can tim: ");
+                    System.out.print("Nhap so ban can tim: ");
                     int tableSearch = sc.nextInt();
                     sc.nextLine();
 
-                    tableManager.searchTable(tableSearch);
+                    searchTable(tableSearch);
                     break;    
                 case 5:
-                    tableManager.displayTables();
+                    displayTables();
                     break;
                 case 6:
-                    tableManager.saveTableListToFile();
+                    saveTableListToFile();
                     System.out.println("Da luu danh sach ban");
                     break;
                 case 0:
@@ -237,38 +239,38 @@ public class Menu {
 
             switch (choice) {
                 case 1:
-                    System.out.println("Nhap ten nhan vien: ");
+                    System.out.print("Nhap ten nhan vien: ");
                     String name = sc.nextLine();
-                    System.out.println("Nhap luong: ");
+                    System.out.print("Nhap luong: ");
                     double salary = sc.nextDouble();
                     sc.nextLine();
 
-                    employeeManager.addEmployee(new Employee(name, salary));
+                    addEmployee(new Employee(name, salary));
                     System.out.println("Da them nhan vien");
                     break;
                 case 2:
-                    System.out.println("Nhap ten nhan vien can xoa: ");
+                    System.out.print("Nhap ten nhan vien can xoa: ");
                     String nameDelete = sc.nextLine();
 
-                    employeeManager.deleteEmployee(nameDelete);
+                    deleteEmployee(nameDelete);
                     break;
                 case 3:
-                    System.out.println("Nhap ten nhan vien can sua: ");
+                    System.out.print("Nhap ten nhan vien can sua: ");
                     String nameUpdate = sc.nextLine();
 
-                    employeeManager.updateEmployee(nameUpdate);
+                    updateEmployee(nameUpdate);
                     break;
                 case 4:
-                    System.out.println("Nhap ten nhan vien can tim: ");
+                    System.out.print("Nhap ten nhan vien can tim: ");
                     String employeeSearch = sc.nextLine();
 
-                    employeeManager.searchEmployee(employeeSearch);
+                    searchEmployee(employeeSearch);
                     break;
                 case 5:
-                    employeeManager.displayEmployees();
+                    displayEmployees();
                     break;
                 case 6:
-                    employeeManager.saveEmployeeListToFile();
+                    saveEmployeeListToFile();
                     System.out.println("Da luu danh sach nhan vien");
                     break;
                 case 0:
@@ -286,8 +288,9 @@ public class Menu {
         
         do {
             System.out.println("===== Quan ly don hang =====");
-            System.out.println("1. Xem chi tiet don hang");
-            System.out.println("2. Tinh doanh thu");
+            System.out.println("1. Hien thi danh sach hoa don");
+            System.out.println("2. Xem chi tiet hoa don");
+            System.out.println("3. Xem doanh thu");
             System.out.println("0. Thoat");
             System.out.print("Chon chuc nang: ");
             choice = sc.nextInt();
@@ -295,12 +298,19 @@ public class Menu {
 
             switch (choice) {
                 case 1:
-                    orderManager.viewOrderDetail();
+                    viewBillList();
                     break;
                 case 2:
-                    orderManager.calculateTotalRevenue();
+                    System.out.print("Nhap ma hoa don: ");
+                    int billID = sc.nextInt();
+                    sc.nextLine();
+
+                    viewBillDetail(billID);
                     break;
                 case 3:
+                    calculateTotalRevenue();
+                    break;
+                case 0:
                     System.out.println("Dang thoat ...");
                     break;
                 default:
@@ -326,33 +336,33 @@ public class Menu {
 
             switch (choice) {
                 case 1:
-                    foodManager.displayMenu();
+                    displayMenu();
                     break;
                 case 2:
                     System.out.print("Nhap ten mon can tim: ");
                     String nameToSearch = sc.nextLine();
-                    foodManager.searchFood(nameToSearch);;
+                    searchFood(nameToSearch);;
                     break;
                 case 3:
-                    System.out.println("Nhap ten mon an: ");
+                    System.out.print("Nhap ten mon an: ");
                     String foodName = sc.nextLine();
-                    System.out.println("Nhap so luong: ");
+                    System.out.print("Nhap so luong: ");
                     int quantity = sc.nextInt();
                     sc.nextLine();
-                    System.out.println("Nhap ten nhan vien order: ");
+                    System.out.print("Nhap ten nhan vien order: ");
                     String employeeName = sc.nextLine();
-                    System.out.println("Nhap so ban: ");
+                    System.out.print("Nhap so ban: ");
                     int tableNumber = sc.nextInt();
                     sc.nextLine();
 
-                    orderManager.placeOrder(foodName, quantity, employeeName, tableNumber);
+                    placeOrder(foodName, quantity, employeeName, tableNumber);
                     break;
                 case 4:
-                    System.out.println("Nhap so ban thanh toan: ");
+                    System.out.print("Nhap so ban thanh toan: ");
                     int tableCheckOut = sc.nextInt();
                     sc.nextLine();
 
-                    orderManager.completeOrder(tableCheckOut);
+                    completeOrder(tableCheckOut);
                     break;
                 case 0:
                     System.out.println("Dang thoat ...");
@@ -362,5 +372,120 @@ public class Menu {
                     break;
             }
         } while (choice != 0);
+    }
+
+    @Override
+    public void addFood(Food food){
+        foodManager.addFood(food);
+    }
+
+    @Override
+    public void removeFood(String name){
+        foodManager.removeFood(name);
+    }
+
+    @Override
+    public void updateFood(String name){
+        foodManager.updateFood(name);
+    }
+
+    @Override
+    public void searchFood(String name){
+        foodManager.searchFood(name);
+    }
+
+    @Override
+    public void saveToFile(){
+        foodManager.saveToFile();
+    }
+
+    @Override
+    public void displayMenu(){
+        foodManager.displayMenu();
+    }
+
+    @Override
+    public void addTable(Table table){
+        tableManager.addTable(table);
+    }
+
+    @Override
+    public void deleteTable(int tableNumber){
+        tableManager.deleteTable(tableNumber);
+    }
+
+    @Override
+    public void updateTable(int tableNumber){
+        tableManager.updateTable(tableNumber);
+    }
+
+    @Override
+    public void searchTable(int tableNumber){
+        tableManager.searchTable(tableNumber);
+    }
+
+    @Override
+    public void displayTables(){
+        tableManager.displayTables();
+    }
+
+    @Override
+    public void saveTableListToFile(){
+        tableManager.saveTableListToFile();
+    }
+
+    @Override
+    public void addEmployee(Employee employee){
+        employeeManager.addEmployee(employee);
+    }
+
+    @Override
+    public void deleteEmployee(String employeeName){
+        employeeManager.deleteEmployee(employeeName);
+    }
+
+    @Override
+    public void updateEmployee(String employeeName){
+        employeeManager.updateEmployee(employeeName);
+    }
+
+    @Override
+    public void searchEmployee(String employeeName){
+        employeeManager.searchEmployee(employeeName);
+    }
+
+    @Override
+    public void displayEmployees(){
+        employeeManager.displayEmployees();
+    }
+
+    @Override
+    public void saveEmployeeListToFile(){
+        employeeManager.saveEmployeeListToFile();
+    }
+
+    @Override
+    public void viewBillList(){
+        orderManager.viewBillList();
+    }
+
+    @Override
+    public void viewBillDetail(int billID){
+        orderManager.viewBillDetail(billID);
+    }
+
+    @Override
+    public void calculateTotalRevenue(){
+        orderManager.calculateTotalRevenue();
+    }
+
+    @Override
+    public void placeOrder(String foodName, int quantity, String employeeName, int tableNumber){
+        orderManager.placeOrder(foodName, quantity, employeeName, tableNumber);
+    }
+
+    @Override
+    public void completeOrder(int tableNumber){
+        orderManager.completeOrder(tableNumber);
     }
 }
