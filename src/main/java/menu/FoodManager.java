@@ -3,7 +3,9 @@ package menu;
 import java.io.*;
 import objects.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class FoodManager {
@@ -27,8 +29,10 @@ public class FoodManager {
     }
 
     public void removeFood(String name) {
-        if (getFoodByName(name) != null){
-            foodList.removeIf(food -> food.getName().equalsIgnoreCase(name));
+        Food food = getFoodByName(name);
+        if (food != null){
+            foodList.remove(food);
+            Food.decreaseTotalFoodCreated();
             System.out.println("Da xoa mon " + name + "!");
         } else {
             System.out.println("Khong tim thay mon an co ten: " + name);
@@ -70,10 +74,40 @@ public class FoodManager {
     }
 
     public void displayMenu() {
-        System.out.println("         == Thuc don ==");
+        System.out.println("===== Thuc don =====");
+        System.out.println("Tong so mon: " + Food.getTotalFoodCreated());
+        System.out.println();
+
+        Map<String, List<Food>> categorizedFoods = new HashMap<>();
+        categorizedFoods.put("Mon Chinh", new ArrayList<>());
+        categorizedFoods.put("Mon Trang Mieng", new ArrayList<>());
+        categorizedFoods.put("Mon An Nhe", new ArrayList<>());
+        categorizedFoods.put("Do Uong", new ArrayList<>());
 
         for (Food food : foodList) {
-            food.display();
+            if (food instanceof MainDish) {
+                categorizedFoods.get("Mon Chinh").add(food);
+            } else if (food instanceof Dessert) {
+                categorizedFoods.get("Mon Trang Mieng").add(food);
+            } else if (food instanceof Snack) {
+                categorizedFoods.get("Mon An Nhe").add(food);
+            } else if (food instanceof Drink) {
+                categorizedFoods.get("Do Uong").add(food);
+            }
+        }
+
+        for (String category : categorizedFoods.keySet()) {
+            System.out.println(category + ":");
+            List<Food> foodsInCategory = categorizedFoods.get(category);
+
+            if (foodsInCategory.isEmpty()) {
+                System.out.println("  Khong co mon nao.");
+            } else {
+                for (Food food : foodsInCategory) {
+                    food.display();
+                }
+            }
+            System.out.println();
         }
     }
 

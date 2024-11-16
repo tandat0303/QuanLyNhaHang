@@ -6,3 +6,5 @@ Do uong,Pepsi,10000.0
 Mon an nhe,chocopie,8000.0
 Do uong,7Up,25000.0
 Mon trang mieng,tao,6000.0
+Mon an nhe,nabati,8000.0
+Do uong,Sting,10000.0

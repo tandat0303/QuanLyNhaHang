@@ -89,43 +89,7 @@ public class Menu implements Manageable {
 
             switch (choice) {
                 case 1:
-                    int type = -1;
-
-                    do {
-                        System.out.println("Chon loai mon an: ");
-                        System.out.println("1. Mon chinh");
-                        System.out.println("2. Mon trang mieng");
-                        System.out.println("3. Mon an nhe");
-                        System.out.println("4. Do uong");
-            
-                        System.out.print("Nhap lua chon: ");
-                        type = sc.nextInt();
-                        sc.nextLine();
-            
-                        System.out.print("Nhap ten mon an: ");
-                        String name = sc.nextLine();
-                        System.out.print("Nhap gia mon an: ");
-                        double price = sc.nextDouble();
-                        sc.nextLine();
-
-                        switch (type) {
-                            case 1:
-                                addFood(new MainDish(name, price));
-                                break;
-                            case 2:
-                                addFood(new Dessert(name, price));
-                                break;
-                            case 3:
-                                addFood(new Snack(name, price));
-                                break;
-                            case 4:
-                                addFood(new Drink(name, price));
-                                break;
-                            default:
-                                System.out.println("Lua chon khong hop le!");
-                                break;
-                        }
-                    } while (type != 0);
+                    addFoodMenu(sc);
                     break;        
                 case 2:
                     System.out.print("Nhap ten mon can xoa: ");
@@ -159,6 +123,48 @@ public class Menu implements Manageable {
         } while (choice != 0);
     }        
 
+    public void addFoodMenu(Scanner sc){
+        int type;
+        System.out.println("===== Them mon an =====");
+        System.out.println("1. Mon chinh");
+        System.out.println("2. Mon trang mieng");
+        System.out.println("3. Mon an nhe");
+        System.out.println("4. Do uong");
+        System.out.println("0. Thoat");
+        System.out.print("Nhap lua chon: ");
+        type = sc.nextInt();
+        sc.nextLine();
+
+        if (type == 0) {
+            System.out.println("Dang thoat ...");
+            return;
+        }
+
+        System.out.print("Nhap ten mon an: ");
+        String name = sc.nextLine();
+        System.out.print("Nhap gia mon an: ");
+        double price = sc.nextDouble();
+        sc.nextLine();
+
+        switch (type) {
+            case 1:
+                addFood(new MainDish(name, price));
+                break;
+            case 2:
+                addFood(new Dessert(name, price));
+                break;
+            case 3:
+                addFood(new Snack(name, price));
+                break;
+            case 4:
+                addFood(new Drink(name, price));
+                break;
+            default:
+                System.out.println("Lua chon khong hop le!");
+                break;
+        }
+    }
+    
     public void manageTables(Scanner sc) {
         int choice = -1;
         
