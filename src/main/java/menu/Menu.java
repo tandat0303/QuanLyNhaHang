@@ -3,13 +3,8 @@ package menu;
 import java.util.Scanner;
 
 import Interface.Manageable;
-import objects.Dessert;
-import objects.Drink;
-import objects.Food;
-import objects.MainDish;
-import objects.Snack;
-import restaurant.Employee;
-import restaurant.Table;
+import objects.*;
+import restaurant.*;
 
 public class Menu implements Manageable {
     private FoodManager foodManager;
