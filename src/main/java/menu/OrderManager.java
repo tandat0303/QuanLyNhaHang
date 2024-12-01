@@ -79,6 +79,34 @@ public class OrderManager {
     
         saveOrderToFile(employeeName, foodName, quantity, tableNumber);
     }
+
+    public void viewOrder(){
+        System.out.println("===== Danh sach don hang =====");
+        try (BufferedReader ordReader = new BufferedReader(new FileReader("data/orders.txt"))) {
+            String line;
+            boolean hasOrders = false;
+            while ((line = ordReader.readLine()) != null) {
+                hasOrders = true;
+                String[] parts = line.split(",");
+
+                String employeeName = parts[0];
+                String food = parts[1];
+                int quantity = Integer.parseInt(parts[2]);
+                int tableNumber = Integer.parseInt(parts[3]);
+
+                System.out.println("- Ten nhan vien order: " + employeeName);
+                System.out.println("- Mon an: " + food + ", so luong: " + quantity);
+                System.out.println("- Ban so: " + tableNumber);
+                System.out.println("--------------------");
+            }
+
+            if (!hasOrders){
+                System.out.println("Hien tai chua co don hang nao");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } 
+    }
     
     public void completeOrder(int tableNumber) {
         List<Table> tableList = tm.getTableList();

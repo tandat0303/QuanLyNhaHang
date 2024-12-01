@@ -289,9 +289,10 @@ public class Menu implements Manageable {
         
         do {
             System.out.println("===== Quan ly don hang =====");
-            System.out.println("1. Hien thi danh sach hoa don");
-            System.out.println("2. Xem chi tiet hoa don");
-            System.out.println("3. Xem doanh thu");
+            System.out.println("1. Xem cac don hang hien tai");
+            System.out.println("2. Hien thi danh sach hoa don");
+            System.out.println("3. Xem chi tiet hoa don");
+            System.out.println("4. Xem doanh thu");
             System.out.println("0. Thoat");
             System.out.print("Chon chuc nang: ");
             choice = sc.nextInt();
@@ -299,16 +300,19 @@ public class Menu implements Manageable {
 
             switch (choice) {
                 case 1:
-                    viewBillList();
+                    viewOrder();
                     break;
                 case 2:
+                    viewBillList();
+                    break;
+                case 3:
                     System.out.print("Nhap ma hoa don: ");
                     int billID = sc.nextInt();
                     sc.nextLine();
 
                     viewBillDetail(billID);
                     break;
-                case 3:
+                case 4:
                     calculateTotalRevenue();
                     break;
                 case 0:
@@ -465,6 +469,11 @@ public class Menu implements Manageable {
         employeeManager.saveEmployeeListToFile();
     }
 
+    @Override
+    public void viewOrder(){
+        orderManager.viewOrder();
+    }
+    
     @Override
     public void viewBillList(){
         orderManager.viewBillList();

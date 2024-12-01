@@ -23,6 +23,7 @@ public interface Manageable{
     void searchEmployee(String employeeName);
     void displayEmployees();
     void saveEmployeeListToFile();
+    void viewOrder();
     void viewBillList();
     void viewBillDetail(int billID);
     void calculateTotalRevenue();
